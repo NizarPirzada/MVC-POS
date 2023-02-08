@@ -1,0 +1,188 @@
+﻿
+@{
+    ViewBag.Title = "AddCustomer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12 grid-margin">
+        <div class="card">
+            <div class="card-body">
+
+               
+
+
+
+                <a href="/customer/customers" class="btn btn-secondary btn-fw" style="float:right">Back</a>
+
+                <h4 class="card-title">Please Enter Details</h4>
+                <form class="form-sample">
+                    <br />
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Company</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="companyName" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Email</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="email" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Contact</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="contact" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Billing Address 1</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="billAddress1" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Billing City</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="billCity" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">State</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="state" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Zip Code</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="zipCode" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+
+                        <div class="col-lg-3"></div>
+
+                        <div class="col-md-6">
+                            <input type="button" class="btn btn-primary btn-fw" value="Save" style="width:100%;" onclick="Register();" />
+                            <br /><br /><div class="alert alert-success" id="add" style="text-align:center; display:none"></div>
+                            <div class="alert alert-danger" id="error" style="text-align:center; display:none;"></div>
+
+
+                        </div>
+
+                        <br /><br />
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#title').html("Add Customer");
+
+        //get current user logged in session info.
+    var userinfo = sessionStorage.getItem("usersession");
+    try {
+        var userobj = JSON.parse(userinfo);
+    }    catch (ex) {    }
+
+    //Register function
+    function Register() {
+        var companyName = $('#companyName').val();
+        var customerContact = $('#contact').val();
+        var customerEmail = $('#email').val();
+        var billingaddresss = $('#billAddress1').val();
+        var state = $('#state').val();
+
+        var registeredby = userobj.strUserID;
+        var city = $('#billCity').val();
+        var zipCode = $('#zipCode').val();
+
+        var mydata = {
+            strCompanyName: companyName,
+            strContact: customerContact,
+            strEmail: customerEmail,
+            strBillToAddress1: billingaddresss,
+            strBillToState: state, 
+            strRegisteredBy: registeredby,
+            strBillToCity: city,
+            strBillToZip: zipCode
+        };
+
+        var myurl = "/api/Customer/Register";
+
+        $.ajax({
+
+            type: "POST",
+            url: myurl,
+            contentType: "application/json",
+            data: JSON.stringify(mydata),
+            dataType: "json",
+            cache: false,
+
+            success: function (data) {
+                $("#add").show().html('Customer Added Successfully').delay(3000).fadeOut(1000);
+
+                window.setTimeout(function () {
+
+                    location.href = "/Customer/Customers/";
+
+                }, 3000);
+
+            }, //end of success
+
+            async: "false",
+
+            error: function (error) {
+
+                $("#eror").show().html('Cannot Add User').delay(3000).fadeOut(1000);
+            }//end of erro
+
+        }); //end of ajax call
+
+    } //end of Register
+
+</script>

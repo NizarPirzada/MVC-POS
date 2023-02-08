@@ -1,0 +1,211 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Advanced Developers.POS</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="~/Content/vendors/iconfonts/mdi/css/materialdesignicons.min.css" />
+    <link rel="stylesheet" href="~/Content/vendors/css/vendor.bundle.base.css" />
+    <link rel="stylesheet" href="~/Content/vendors/css/vendor.bundle.addons.css" />
+
+    <!-- endinject -->
+    <!-- plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="~/Content/css/style.css" />
+    <link rel="stylesheet" href="~/Content/css/toggle.css">
+
+
+    <!-- endinject -->
+    <link rel="shortcut icon" href="~/Content/images/favicon.png" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.0/themes/smoothness/jquery-ui.css">
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+
+    <style type="text/css">
+        .sidebar .closebtn {
+            top: 0;
+            font-size: 36px;
+        }
+
+        @@media screen and (min-width: 0px) and (max-width: 800px) {
+            #closebtn {
+                display: none;
+            }
+            /* show it on small screens */
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div class="text-center navbar-brand-wrapper d-flex align-items-top justify-content-center">
+                <a class="navbar-brand brand-logo" href="#">
+                    <img src="~/Content/images/logo.svg" alt="logo" />
+                </a>
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-center">
+
+                <!--Page Title-->
+                <div id="title" style="margin-bottom:3px; color:white; font-weight:bold; font-size:18px;"></div>
+
+                <ul class="navbar-nav navbar-nav-right">
+                    <li class="nav-item dropdown d-none d-xl-inline-block">
+                        <a class="nav-link dropdown-toggle" id="UserDropdown" href="#" data-toggle="dropdown" aria-expanded="false">
+                            <span class="profile-text">Hello <label id="lblName" style="font:bold;font-size:13px"></label>!</span>
+
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+
+                            <a class="dropdown-item mt-2">
+                                Change Password
+                            </a>
+
+                            <a href="/account/logout" class="dropdown-item">
+                                Sign Out
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_sidebar.html -->
+
+            <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                <ul class="nav">
+                    <li class="nav-item" style="text-align:right;margin-right:8px">
+                        <a href="javascript:void(0)" class="closebtn" id="closebtn" onclick="closeNav()">&times;</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Customer/Customers">
+                            <i class="menu-icon mdi mdi-receipt"></i>
+                            <span class="menu-title"><br />Customer Managemnet</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Invoice/Index">
+                            <i class="menu-icon mdi mdi-backup-restore"></i>
+                            <span class="menu-title">Invoice Management</span>
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Payment/Payment">
+                            <i class="menu-icon mdi mdi-chart-line"></i>
+                            <span class="menu-title">Payments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Account/ChangePassword">
+                            <i class="menu-icon mdi mdi-security"></i>
+                            <span class="menu-title">Change Password</span>
+                        </a>
+                    </li>
+
+                </ul>
+            </nav>
+
+            <span style="font-size:30px;cursor:pointer;display:none" id="sidebarOpen" onclick="openNav()">&#9776;</span>
+
+            <!-- partial -->
+            <div class="main-panel">
+                <div class="content-wrapper" style="margin-top:-10px !important;">
+                    @RenderBody()
+                </div>
+                <!-- content-wrapper ends -->
+                <!-- partial:../../partials/_footer.html -->
+                <footer class="footer" style="text-align:center">
+                    <div class="container-fluid clearfix">
+                        <span class="text-black d-block text-center text-sm-left d-sm-inline-block" style="font-size:14px;">
+                            Copyright © 2019 www.easyPayroll.net - All rights reserved.
+                        </span>
+                    </div>
+                </footer>
+                <!-- partial -->
+            </div>
+            <!-- main-panel ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+
+    <script src="~/Content/vendors/js/vendor.bundle.base.js"></script>
+    <script src="~/Content/vendors/js/vendor.bundle.addons.js"></script>
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="~/Content/js/off-canvas.js"></script>
+    <script src="~/Content/js/misc.js"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <!-- End custom js for this page-->
+</body>
+
+</html>
+
+<script>
+    //lblName
+    var userinfos = sessionStorage.getItem("usersession");
+    var userInfo = JSON.parse(userinfos);
+
+    $('#lblName').text(userInfo["strUserID"]);
+
+
+
+
+    var previousCardWidth = 0;
+    var previousSideBarWidth = 0;
+    function openNav() {
+        //$('#sidebar').css('width', '100%');
+        $('#sidebar').animate({ width: previousSideBarWidth }, 100);
+        $('#sidebarOpen').hide(200);
+        $('#closebtn').show(200);
+        $('.main-panel').css('width', previousCardWidth);
+        //$('.main-panel').animate({ width:$('.navbar- brand - wrapper').width() - 10}, 0);
+    }
+    function closeNav() {
+        $('#sidebar').animate({ width: '0' }, 0);
+        //$('#sidebar').css('width', '0');
+        $('#sidebarOpen').show(200);
+        $('#closebtn').hide();
+        $('.main-panel').css('width', '99%');
+        //$('.main-panel').animate({ width: '100%' }, 100);
+        previousCardWidth = $('.main-panel').width();
+        previousSideBarWidth = $('.nav').width();
+
+
+    }
+    //$('sidebar').toggle(
+    //    function () {
+    //        $('#sidebar').css('left', '0')
+    //    }, function () {
+    //        $('#sidebar').css('left', '200px')
+    //    })
+
+
+</script>
+<link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+<script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>

@@ -1,0 +1,174 @@
+﻿@{ 
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Login</title>
+    <!-- plugins:css -->
+    <link rel="stylesheet" href="~/Content/vendors/iconfonts/mdi/css/materialdesignicons.min.css">
+
+    <link rel="stylesheet" href="~/Content/vendors/css/vendor.bundle.base.css">
+
+    <link rel="stylesheet" href="~/Content/vendors/css/vendor.bundle.addons.css">
+    <!-- endinject -->
+    <!-- plugin css for this page -->
+    <!-- End plugin css for this page -->
+    <!-- inject:css -->
+    <link rel="stylesheet" href="~/Content/css/style.css">
+    <link rel="stylesheet" href="~/Content/css/reg.css" />
+    <!-- endinject -->
+    <link rel="shortcut icon" href="~/Content/images/favicon.png" />
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="http://parsleyjs.org/dist/parsley.js"></script>
+
+</head>
+
+<body>
+    <div class="container-scroller">
+        <div class="container-fluid page-body-wrapper full-page-wrapper auth-page">
+            <div class="content-wrapper d-flex align-items-center auth auth-bg-1 theme-one">
+                <div class="row w-100">
+
+                    <div class="col-lg-4 mx-auto">
+                        <h3 style="color:white; text-align:center">Advanced Developers.POS</h3><br />
+
+                        <div class="auto-form-wrapper">
+
+                            <form>
+                                <div class="form-group">
+                                    <label class="label">Username</label>
+                                    <div class="input-group">
+                                        <input type="text" id="username" class="form-control" placeholder="Username" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                <i class="mdi mdi-check-circle-outline"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="label">Password</label>
+                                    <div class="input-group">
+                                        <input type="password" id="password" class="form-control" placeholder="*********" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">
+                                                <i class="mdi mdi-check-circle-outline"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary submit-btn btn-block" type="button" onclick="login();">Login</button>
+                                    <input type="submit" id="sub" style="display:none;">
+                                </div>
+                              
+                                <div class="text-block text-center my-3">
+                                   
+                                    <br />
+                                    <div  id="failuremg" style="display:none;" class="alert alert-danger"> Eror Message</div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+            <!-- content-wrapper ends -->
+        </div>
+        <!-- page-body-wrapper ends -->
+    </div>
+
+
+    <!-- container-scroller -->
+    <!-- plugins:js -->
+    <script src="~/Content/vendors/js/vendor.bundle.base.js"></script>
+
+    <script src="~/Content/vendors/js/vendor.bundle.addons.js"></script>
+    <!-- endinject -->
+    <!-- inject:js -->
+    <script src="~/Content/js/off-canvas.js"></script>
+    <script src="~/Content/js/misc.js"></script>
+    <!-- endinject -->
+</body>
+
+</html>
+
+<script>
+
+   
+
+    //login method
+    function login()
+    {
+
+       
+
+        var username = $('#username').val();
+        var password = $('#password').val();
+
+        var logindata = {
+            strUserID: username,
+            strUserPwd : password
+        };
+
+        var loginurl = "/api/user/Login";
+
+        $.ajax(
+            {
+                type: "POST",
+                url: loginurl,
+                contentType: "application/json; charset=utf-8",
+                data: JSON.stringify(logindata),
+                dataType: "json",
+                cache: false,
+
+                success: function (data) {
+
+                    // Store in session
+                    sessionStorage.setItem("usersession", JSON.stringify(data));
+                    var userinfo = sessionStorage.getItem("usersession");
+                    try {
+                        var obj = JSON.parse(userinfo); // this is how you parse a string into JSON
+                    }
+                    catch (ex) {
+                        console.error(ex);
+                    }
+
+                    if (userinfo != "null") {
+                        //redirect user according to its roles
+                        if (obj.ysnAdmin == "1") {
+                            location.href = "/Customer/Customers/";
+                        }
+                        else if (obj.ysnAdmin == "0") {
+                            alert("You are not authorized");
+                        }
+                    }//userinfo not equal to null
+
+                    else  {
+                        //error message here
+                        $("#failuremg").show().html('Invalid User name or Password').delay(4000).fadeOut(1000);
+                    }
+            
+                }, //end of success
+
+                error: function () {
+
+                    alert("Invalid User Name or Password");
+                    
+                }//end of error
+
+
+            }); //end of ajax call
+
+    } //end of login method
+
+
+
+</script>

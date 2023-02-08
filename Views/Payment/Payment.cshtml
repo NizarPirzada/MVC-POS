@@ -1,0 +1,290 @@
+﻿@{
+    ViewBag.Title = "Payments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="card">
+    <div class="card-body">
+
+        <div class="row">
+            <div class="col-lg-4">
+                <h2>Recieve Payment</h2>
+            </div>
+            <br /><br />
+            <div class="col-lg-3"></div>
+            <div class="col-lg-4">
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-lg-4">
+                <label>Customer</label><br />
+                <select id="customerDropDownId" disabled style="border-color:darkseagreen; height:30px; width:100%; margin-right:10px; border-radius:4px"></select>
+
+            </div>
+            <br /><br />
+            <div class="col-lg-3">
+                <label> Invoice No. </label><br />
+                <input type="text" id="invoiceNumberLabel" disabled style="font-size:19px; font-family:Arial; border:1px solid; width:100%; border-color:lightslategray; border-radius:4px;  padding-left:5px"></input>
+
+            </div>
+            <br /><br />
+            <div class="col-lg-4">
+                <label>Payment Date</label><br />
+                <input id="paymentDate" type="date" disabled style=" border:1px solid #d1d1d1; height:30px; width:100%; margin-right:10px;" readonly />
+
+            </div>
+        </div>
+
+        <br />
+
+        <div class="row">
+
+            <div class="col-lg-4">
+
+                <label>Payment Method</label>
+                <br />
+                <select id="paymentMethodID" style="border-color:lightgray; height:30px; width:100%;  border-radius:4px">
+                    <option value="">Cash</option>
+                    <option value="">Visa</option>
+                    <option value="">Check</option>
+                </select>
+
+            </div>
+            <br /><br />
+            <div class="col-lg-3">
+                <label>Store Number</label>
+                <select id="storeNumberID" style="border-color:lightgray; height:30px; width:100%; margin-right:10px; border-radius:4px"></select>
+
+
+            </div>
+            <br /><br />
+            <div class="col-lg-4">
+                <label>Reference</label>
+                <input id="referenceID" type="text" style="border-color:lightgray; border:1px solid #d1d1d1; height:35px; width:100%; margin-right:10px;" />
+
+            </div>
+
+        </div>
+        <br />
+        <hr />
+
+        <div class="row">
+
+
+            <div class="col-lg-4">
+                <label>Amount Recieved : </label><br />
+                <input id="amountReceivedID" type="text" style="border-color:lightgray; border:1px solid #d1d1d1; height:35px; width:100%; " />
+
+            </div>
+            <div class="col-lg-3">
+
+            </div>
+            <br />
+            <div class="col-lg-5">
+
+                <label>AMOUNT RECEIVED: </label>
+                &nbsp;&nbsp;
+                <label id="labelAmount" style="font-size:32px; font-family:Arial; font-weight:bold;  "></label>
+
+
+            </div>
+
+
+            <div class="col-lg-4">
+                <label></label><br />
+            </div>
+        </div>
+        <br />
+        <div class="row">
+
+            <div class="col-lg-3">
+
+                <button id="savePaymentBtn" onclick="save()" style=" color:white; width:100%; height:40px; border-radius:4px;" class="btn btn-success">Save Payment</button>
+
+
+                <br /><br />
+
+            </div>
+            <div class="col-lg-2">
+
+                <button id="cancleBtn" style="color:white; width:100%; height:40px; border-radius:4px;" class="btn btn-danger">Cancel</button>
+
+
+            </div>
+
+
+            <div class="col-lg-3"></div>
+            <div class="col-lg-3"><button id="generateInvoice" onclick="generateInvoice()" style="color:white; width:70%; height:40px; float:right; border-radius:4px;" class="btn btn-primary">Generate Invoice</button></div>
+
+        </div>
+        <div class="row">
+
+            <div class="col-lg-8">
+
+
+            </div>
+            
+            <div class="col-lg-3"><button id="downloadInvoice" onclick="downloadInvoice()" style="color:white; width:70%; height:40px; float:right; border-radius:4px;" class="btn btn-primary">Download Invoice</button></div>
+
+        </div>
+
+        <br />
+        <div>
+        </div>
+        <br />
+        <div>
+            @*<input id="storeNumberID" type="text" style="border-color:lightgray; border:1px solid #d1d1d1; height:35px; width:200px; margin-right:10px;" />*@
+
+        </div>
+        <br />
+        <div>
+
+
+        </div>
+
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+
+        //call load list. it will get list of all customers on document load.
+        loadList();
+
+    });
+    function downloadInvoice() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var myParam = urlParams.get('invoiceid');
+        var invoiceId = 0;
+        if (myParam > 0) {
+            invoiceId = myParam;
+        }
+        else {
+            invoiceId = 123;
+        }
+        var basePath = location.origin;
+        var filePath = basePath + '/Content/receipts/Invoice' + invoiceId + '.pdf';
+        window.location = filePath;
+        //location.href = '/Content/receipts/Invoice123.pdf';
+    }
+    function loadList() {
+
+        $('#title').html("Payment");
+        document.getElementById("paymentDate").valueAsDate = new Date();
+        //var urlParams = new URLSearchParams(window.location.search);
+        //var myParam = urlParams.get('invoiceid');
+        //var invoiceId = 0;
+        //if (myParam > 0) {
+        //    invoiceId = myParam;
+        //}
+
+        var myurl = "/api/Invoice/GetPaymentInvoice/";
+        $.ajax({
+
+            type: "GET",
+            url: myurl,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                var dataValue = data;
+                document.getElementById('labelAmount').innerHTML = "$" + dataValue.TotalInvoiceAmount;
+                $('#invoiceNumberLabel').val("Invoice " + dataValue.InvoiceID);
+                document.getElementById('amountReceivedID').value = dataValue.TotalInvoiceAmount;
+                var items = "";
+                items += "<option value='0' selected>All Stores</option>";
+                $.each(dataValue.Customers, function (i, item) {
+                    items += "<option value='" + item.lngCustID + "'>" + (item.strCompanyName) + "</option>";
+                });
+                $("#customerDropDownId").html(items);
+                $("#customerDropDownId").val(dataValue.ClientID);
+
+                var itemsLoc = "";
+                //itemsLoc += "<option value='0' selected>All Stores</option>";
+                $.each(dataValue.Locations, function (i, item) {
+                    itemsLoc += "<option value='" + item.LocationID + "'>" + (item.LocationName) + "</option>";
+                });
+                $("#storeNumberID").html(itemsLoc);
+            } //end of success
+
+        }); //end of ajax call
+
+    }
+    $('#amountReceivedID').change(function () {
+        var value = $('#amountReceivedID').val();
+        document.getElementById('labelAmount').innerHTML = value;
+    });
+    function generateInvoice() {
+        var invoiceID = "3";
+        var myurl = "/api/Payment/GenerateReceipt?invoice=" + invoiceID;
+        
+        $.ajax({
+
+            type: "GET",
+            url: myurl,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            //data: invoiceID,
+            cache: false,
+            success: function () {
+
+            } //end of success
+
+        }); //end of ajax call
+    }
+    function save() {
+        var invoiceID = document.getElementById('invoiceNumberLabel').innerHTML;
+        var invoiceDate = document.getElementById("paymentDate").valueAsDate;
+
+        var elt = document.getElementById('paymentMethodID');
+
+        var payMethod = elt.options[elt.selectedIndex].text;;
+        var payAmount = document.getElementById('amountReceivedID').value;
+        var netAmount = document.getElementById('amountReceivedID').value;
+        var userinfos = sessionStorage.getItem("usersession");
+        var userInfo = JSON.parse(userinfos);
+
+        var mydata = {
+            InvoiceIDString: invoiceID,
+            PaymentDate: invoiceDate,
+            PaymentMethod: payMethod,
+            PaymentAmount: payAmount,
+            NetAmount: netAmount,
+            RegisteredBy: userInfo["strUserID"]
+        };
+
+        var myurl = "/api/Invoice/SavePayment";
+
+        $.ajax({
+
+            type: "POST",
+            url: myurl,
+            contentType: "application/json",
+            data: JSON.stringify(mydata),
+            dataType: "json",
+            cache: false,
+
+            success: function (data) {
+                $("#add").show().html('Saved Payment Successfully').delay(3000).fadeOut(1000);
+
+                //window.setTimeout(function () {
+
+                //    location.href = "/Customer/Customers/";
+
+                //}, 3000);
+
+            }, //end of success
+
+            async: "false",
+
+            error: function (error) {
+
+                $("#eror").show().html('Cannot Save Payment').delay(3000).fadeOut(1000);
+            }//end of erro
+
+        }); //end of ajax call
+    }
+
+
+</script>

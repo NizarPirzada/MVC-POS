@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewBag.Title = "Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body" style="padding:1.25rem !important">
+                <div class="col-lg-3">
+                    <a href="/Customer/AddCustomer/" class="btn btn-primary btn-fw">
+                        <i class="mdi mdi-upload"></i>Add New Customer
+                    </a>
+                </div>
+                <hr />
+                <div class="table-responsive">
+
+                    <table id="records_table" class="table table-striped">
+                        <thead id="thead"> </thead>
+                        <tbody id="tbodyid"></tbody>
+
+
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#title').html("Customers List");
+
+    $(document).ready(function () {
+
+        //call load list. it will get list of all customers on document load.
+        loadList();
+
+    }); //end of document ready
+
+
+    //get list of all customers
+    function loadList() {
+
+        var myurl = "/api/customer/GetCustomerList/";
+        $.ajax({
+
+            type: "GET",
+            url: myurl,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+
+                //table.ajax.reload();
+
+                $("#thead").empty();
+                $("#tbodyid").empty();
+
+                var thHTML = '<tr style="color:White;background-color:#00BDA4;font-weight:bold;"><th class="h6 center col-md-1" scope="col">Company Name</th> <th class="h6 center col-md-1" scope="col">Contact</th> <th class="center h6 col-md-1" scope="col">Billing Address</th> <th class="h6 col-md-1 center" scope="col">City</th> <th class="h6 col-md-1 center" scope="col">Email</th> <th class="h6 col-md-1 center" scope="col">Registeration Date</th> <th class="h6 col-md-1 center" scope="col">Registered by</th><th class="h6 col-md-1 center" scope="col">Zip Code</th> <th class="h6 col-md-1 center" scope="col">State</th> </tr>';
+                var trHTML = '';
+                $.each(data, function (i, item) {
+                    trHTML += '<tr><td><a href="/Customer/EditCustomer/' + item.lngCustID + '">' + item.strCompanyName + '</a></td> <td>' + item.strContact + '</td> <td>' + item.strBillToAddress1 + '</td> <td>' + item.strBillToCity + '</td> <td>' + item.strEmail + '</td> <td>' + formatDate(new Date(item.dtmRegisteredDate)) + '</td> <td>' + item.strRegisteredBy + '</td> <td>' + item.strBillToZip + ' </td>  <td>' + item.strBillToState + '</td></tr > ';
+                });
+                // $('buildtable').append(tableHTML);
+                //$('table#records_table').append(tableHTML);
+                $('table#records_table thead').append(thHTML);
+                $('table#records_table tbody').append(trHTML);
+                $('#records_table').DataTable();
+
+            } //end of success
+
+        }); //end of ajax call
+
+    } //end of loadlist()
+
+    function formatDate(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0' + minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;
+        return date.getMonth() + 1 + "/" + date.getDate() + "/" + date.getFullYear() + "  " + strTime;
+    }
+
+
+</script>

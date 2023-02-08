@@ -1,0 +1,279 @@
+﻿
+@{
+    ViewBag.Title = "EditCustomer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="row">
+    <div class="col-12 grid-margin">
+        <div class="card">
+            <div class="card-body">
+                
+                <a href="/customer/customers" class="btn btn-secondary btn-fw" style="float:right">Back</a>
+
+                <h4 class="card-title">Update Customer Details</h4>
+                <br />
+                <form class="form-sample">
+                    <br />
+                    <div class="row">
+                        <input type="text" id="custID" class="form-control" style="display:none;">
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+
+                                <label class="col-sm-3 col-form-label">Company</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="companyName" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Email</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="email" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="row">
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Contact</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="contact" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Billing Address 1</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="billAddress1" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Billing City</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="billCity" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">State</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="state" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group row">
+                                <label class="col-sm-3 col-form-label">Zip Code</label>
+                                <div class="col-sm-9">
+                                    <input type="text" id="zipCode" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+
+                            <button type="button" class="btn btn-primary btn-fw" style="width:100%;" onclick="UpdateCustomer();">
+                                <i class="mdi mdi-cloud-download"></i>Edit
+                            </button>
+
+                          
+
+                        </div>
+                        <br /><br />
+                              <div class="col-md-6">
+
+                                  <input type="button" class="btn btn-danger btn-fw" value="Delete" onclick="deleteCustomer();" style="width:100%;"  />
+                              </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-6">
+                            <br /><div class="alert alert-success" id="updated" style="text-align:center; display:none"></div>
+                            <div class="alert alert-danger" id="error" style="text-align:center; display:none;"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $('#title').html("Edit Customer");
+
+    //get current user logged in session info.
+    var userinfo = sessionStorage.getItem("usersession");
+    try {
+        var userobj = JSON.parse(userinfo);
+    } catch (ex) { }
+
+
+
+    //get id of Customer through URL
+    var url = window.location.pathname;
+    var userid = url.substring(url.lastIndexOf('/') + 1);
+
+    var mydata = {
+        lngCustID: userid
+    };
+
+    $(document).ready(function () {
+        var myurl = "/api/customer/GetCustomerByID";
+        $.ajax({
+
+            type: "POST",
+            url: myurl,
+            contentType: "application/json; charset=utf-8",
+            data: JSON.stringify(mydata),
+            dataType: "json",
+            cache: false,
+            success: function (data) {
+                    $('#custID').val(data.lngCustID);
+                    $('#companyName').val(data.strCompanyName);
+                    $('#contact').val(data.strContact);
+                    $('#email').val(data.strEmail);
+                    $('#billAddress1').val(data.strBillToAddress1);
+                    $('#state').val(data.strBillToState);
+                $('#billCity').val(data.strBillToCity);
+                $('#zipCode').val(data.strBillToZip);
+
+            } //end of success
+
+        }); //end of ajax call
+
+    }); //end of document.getready
+
+
+
+    //Update Customer
+    function UpdateCustomer() {
+
+
+      var custid = $('#custID').val();
+      var name= $('#companyName').val();
+      var contact =   $('#contact').val();
+      var email =   $('#email').val();
+       var billaddress =  $('#billAddress1').val();
+       var state =  $('#state').val();
+
+      var bilcity =   $('#billCity').val();
+        var zipcode = $('#zipCode').val();
+
+        var mydata = {
+            lngCustID : custid,
+            strCompanyName: name,
+            strContact: contact,
+            strEmail: email,
+            strBillToAddress1: billaddress,
+            strBillToState: state,
+            strBillToCity: bilcity,
+            strBillToZip: zipcode
+        };
+
+        var myurl = "/api/Customer/UpdateCustomerByID";
+
+
+        $.ajax({
+            type: "POST",
+            url: myurl,
+            contentType: "application/json",
+            data: JSON.stringify(mydata),
+            dataType: "json",
+            cache: false,
+
+            success: function (data) {
+
+                $("#updated").show().html('Record Updated').delay(3000).fadeOut(1000);
+
+                window.setTimeout(function () {
+
+                    location.href = "/Customer/Customers/";
+
+                }, 3000);
+
+
+            },//end of success
+
+            async: "false",
+
+            error: function (error) {
+
+                $("#eror").show().html('Cannot update user').delay(4000).fadeOut(1000);
+             
+            }//end of error function
+
+        }); //end of ajax call
+    } //end of Update function
+
+
+    //delete customer 
+
+    function deleteCustomer() {
+
+        var myurl = "/api/Customer/DeleteCustomer";
+
+
+        $.ajax({
+            type: "POST",
+            url: myurl,
+            contentType: "application/json",
+            data: JSON.stringify(mydata),
+            dataType: "json",
+            cache: false,
+
+            success: function (data) {
+
+                $("#updated").show().html('Customer Deleted Successfully').delay(3000).fadeOut(1000);
+
+                window.setTimeout(function () {
+
+                    location.href = "/Customer/Customers/";
+
+                }, 3000);
+
+
+            },//end of success
+
+            async: "false",
+
+            error: function (error) {
+
+                $("#eror").show().html('Cannot Delete Customer user').delay(4000).fadeOut(1000);
+
+            }//end of error function
+
+        }); //end of ajax call
+    }
+
+
+</script>

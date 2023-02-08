@@ -1,0 +1,525 @@
+﻿
+@{
+    /**/
+
+    ViewBag.Title = "Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="row">
+
+    <div class="col-lg-3">
+
+
+        <label>Customer Name</label>
+        <input type="text" class="form-control" id="customerName" placeholder="John Doe" />
+    </div>
+
+    <div class="col-lg-3">
+
+        <label>Email </label>
+        <input type="text" class="form-control" id="customerEmail" placeholder="johndoe@example.com" />
+    </div>
+
+    <div class="col-lg-3">
+
+
+
+        <label>Terms</label>
+        <select name="terms" id="terms" class="form-control" placeholder="Please Select Terms"></select>
+    </div>
+
+
+    <div class="col-lg-3">
+
+        <label>Invoice Date </label>
+        <input type="text" class="form-control" placeholder="30/09/2019" value="30/09/2019" disabled />
+    </div>
+
+</div>
+
+
+
+
+
+<br />
+
+<div class="row">
+
+    <div class="col-lg-6">
+
+
+
+        <label>Billing Address</label><br />
+        <textarea class="form-control" id="billingAddress"> 
+</textarea>
+    </div>
+
+    <div class="col-lg-6">
+        <br /><br />
+        <h3 style="text-align:center">
+            Balance Due: &nbsp;$
+            <label id="due">0</label>
+        </h3>
+    </div>
+
+</div>
+
+<br />
+
+
+<br />
+<div class="row">
+
+    <div class="col-lg-12">
+
+
+        <table class="table" id="productTable" style="background-color:burlywood">
+            <tr style="background-color:lightcoral !important">
+                <th>#</th>
+                <th>Product/Service</th>
+                <th>Description</th>
+                <th>QTY</th>
+                <th>RATE</th>
+                <th>Amount</th>
+                <th>TAX</th>
+                <th>Action</th>
+            </tr>
+
+
+            <tr>
+                <td>1</td>
+
+                <td style="display:none;">
+                    <input type="text" id="productid1" style="display:none" />
+                    >
+                </td>
+                <td><input type="text" name="p1" id="productName1" onkeyup="getProduct(this);" class="form-control"></td>
+                <td><input type="text" name="p1" id="description1" class="form-control"></td>
+                <td><input type="text" name="p1" id="qty1" onkeyup="calculateRate(this);" class="form-control"></td>
+                <td><input type="text" name="p1" id="rate1" class="form-control" disabled></td>
+                <td><input type="text" name="totalAmount"  id="total1" class="form-control" disabled></td>
+                <td><input type="checkbox" checked data-toggle="toggle"></td>
+                <td>Delete</td>
+            </tr>
+
+
+
+
+
+        </table>
+    </div>
+
+</div>
+<br />
+<div class="row">
+
+
+    <div class="col-lg-9">
+        <input type="button" class="btn btn-secondary" onclick="AddRow();" value="Add Row" />
+    </div>
+
+    <div class="col-lg-3" style="float:right">
+        <h4>Sub Total : $2230</h4>
+    </div>
+
+
+
+</div>
+
+<br />
+<div class="row">
+    <div class="col-lg-8" style="float:right">
+
+
+
+        <label>Message</label><br />
+        <textarea class="form-control" id="message" style="width:50%"></textarea>
+    </div>
+
+    <div class="col-lg-4" style="float:right">
+
+        <table>
+            <tr>
+                <td>
+                    Tax : 30$ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Muncipal Tax : 30%
+                </td>
+            </tr>
+
+            <tr>
+                <td> <br />Total : $2230 &nbsp;&nbsp;&nbsp;&nbsp; Balnce Due: $2230 </td>
+            </tr>
+        </table>
+
+
+
+
+
+
+
+    </div>
+
+</div>
+
+<br />
+<hr />
+
+<div class="row">
+
+    <div class="col-lg-3"></div>
+    <div class="col-lg-3">
+        <button type="button" class="btn btn-danger"  value="Delete"  style="width:100%" />
+    </div>
+
+    <div class="col-lg-3">
+        <button href="#" class="btn btn-success" onclick="getall();" style="width:100%">Save</button>
+    </div>
+    <div class="col-lg-3">
+        <a href="/Payment/Payment" id="mylink" class="btn btn-primary" style="width:100%">Payment</a>
+    </div>
+</div>
+
+<br />
+
+<input type="text" class="form-control" id="invoiceid" style="display:none;" />
+<input type="text" class="form-control" id="customerid" style="display:none;">
+<input type="text" class="form-control" id="regby" style="display:none;">
+
+<script>
+
+   
+
+
+
+    var userinfo = sessionStorage.getItem("usersession");
+    var obj = JSON.parse(userinfo);
+    $('#regby').val(obj.strUserID);
+
+
+    //get id of Customer through URL
+    var url = window.location.pathname;
+    var invoiceid = url.substring(url.lastIndexOf('/') + 1);
+
+    if (invoiceid == "") {
+        $('#title').html("Create New Invoice");
+    }
+    else if (invoiceid!="") {
+        $('#title').html("Edit Invoice");
+
+        var loginurl = "/api/invoice/getinvdata?id=" + invoiceid;
+
+        $.ajax(
+            {
+                type: "POST",
+                url: loginurl,
+                contentType: "application/json; charset=utf-8",
+                              dataType: "json",
+                cache: false,
+
+                success: function (data) {
+
+                    $('#customerName').val(data.strCompanyName);
+                    $("#customerEmail").val(data.strEmail);
+                    $("textarea#billingAddress").val(data.strBillToAddress1);
+                    $("#customerid").val(data.lngCustID);
+
+                }, //end of success
+
+                error: function () {
+
+
+                }//end of error
+
+
+            }); //end of ajax call
+
+
+
+
+
+    }
+
+
+    $(document).ready(function () {
+
+        var selectStarted = false;
+        var timer;
+        $('#customerName').autocomplete({
+            source: function (request, response) {
+                var iii = $("#customerName").val();
+                clearTimeout(timer);
+                var autocompleteUrl = "/api/Customer/GetCustomerByName?search=" + iii;
+                $.ajax({
+                    url: autocompleteUrl,
+                    type: 'GET',
+                    cache: false,
+                    dataType: 'json',
+
+                    success: function (json) {
+                        if (json == null || json == '') {
+                            timer = setTimeout(function () {
+                                //$("#failuremg").show().html('Lot number not found, please enter Strain data.');
+                            }, 1000);
+
+
+
+
+                        }
+                        //else {
+                        //    $("#lotfound").show().html('Lot number found.').delay(5000).fadeOut(1000);
+
+                        //}
+                        response($.map(json, function (data, id) {
+                            return {
+                                label: data.strCompanyName,
+                                value: data
+                            };
+
+                        }));
+
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        console.log('some error occured', textStatus, errorThrown);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, ui) {
+
+                $("#customerName").val(ui.item.label);
+                $("#customerEmail").val(ui.item.value.strEmail);
+                $("textarea#billingAddress").val(ui.item.value.strBillToAddress1);
+                $("#customerid").val(ui.item.value.lngCustID);
+
+
+                //        //    populatedrpGroup(ui.item.value);
+                $(".ui-menu-item").hide();
+                //        //    lNumberText = ui.item.label;
+                //        //    selectStarted = true;
+                //        //    //call submit
+                //        //    submit();
+                return false
+            },
+        });
+    });
+
+
+
+
+    function getProduct(el) {
+        var val = el.id
+        var myid = val[val.length - 1];
+
+        $('#productName' + myid).autocomplete({
+            source: function (request, response) {
+                var iii = $("#productName" + myid).val();
+
+                var autocompleteUrl = "/api/Product/GetProductByName?search=" + iii;
+                $.ajax({
+                    url: autocompleteUrl,
+                    type: 'GET',
+                    cache: false,
+                    dataType: 'json',
+
+                    success: function (json) {
+                        if (json == null || json == '') {
+
+
+
+
+                        }
+                        //else {
+                        //    $("#lotfound").show().html('Lot number found.').delay(5000).fadeOut(1000);
+
+                        //}
+                        response($.map(json, function (data, id) {
+                            return {
+                                label: data.StrProdName,
+                                value: data
+                            };
+
+                        }));
+
+                    },
+                    error: function (xmlHttpRequest, textStatus, errorThrown) {
+                        console.log('some error occured', textStatus, errorThrown);
+                    }
+                });
+            },
+            minLength: 1,
+            select: function (event, ui) {
+
+                $("#productName" + myid).val(ui.item.label);
+                $("#description" + +myid).val(ui.item.value.strSaleDescription);
+                $("#rate" + myid).val(ui.item.value.dblSalesPrice);
+                $("#rate" + myid).val(ui.item.value.dblSalesPrice);
+                $("#productid" + myid).val(ui.item.value.StrProdNumber);
+
+
+                //        //    populatedrpGroup(ui.item.value);
+                $(".ui-menu-item").hide();
+                //        //    lNumberText = ui.item.label;
+                //        //    selectStarted = true;
+                //        //    //call submit
+                //        //    submit();
+                return false
+            },
+        });
+    }
+
+
+
+
+    $.get("/api/Terms/GetTerms", function (data, status) {
+
+        var items = "";
+        items += "<option value='Select Terms' selected>Select Terms</option>";
+        $.each(data, function (i, item) {
+            items += "<option value='" + item.lngTermsID + "'>" + (item.strTerms) + "</option>";
+        });
+        $("#terms").html(items);
+
+
+    });
+
+
+
+    var productNameid = 1;
+    var descriptionid = 1;
+    var rateid = 1;
+    var serial = 1;
+    var qtyid = 1;
+    var totalid = 1;
+    var nameid = 1;
+    var pr = 1;
+    function AddRow() {
+        productNameid = productNameid + 1;
+        descriptionid = descriptionid + 1;
+        rateid = rateid + 1;
+        serial = serial + 1;
+        qtyid = qtyid + 1;
+        nameid = nameid + 1;
+        totalid = totalid + 1;
+        pr = pr + 1;
+        var markup = "<tr><td>" + serial + "</td><td style='display:none;'><input type='text' style='display:none' name='p" + nameid + "'  id='productid" + pr + "' ></td><td><input type='text' class='form-control' name='p" + nameid + "'  id='productName" + productNameid + "' onkeyup='getProduct(this);' ></td> <td><input type='text' name='p" + nameid + "' id='description" + descriptionid + "'class='form-control'></td><td><input type='text' name='p" + nameid + "' id='qty" + qtyid + "' class='form-control' onkeyup='calculateRate(this);'></td><td><input type='text' name='p" + nameid + "' id='rate" + rateid + "' class='form-control' disabled></td> <td><input type='text' name='totalamount' id='total" + totalid + "'class='form-control' disabled ></td><td></td><td></td></tr > ";
+        $("#productTable").append(markup);
+
+
+    }
+
+
+    function calculateRate(el) {
+
+        var val = el.id
+        var myid = val[val.length - 1];
+
+        var rate = $('#rate' + myid).val();
+        var qty = $('#qty' + myid).val();
+        var total = rate * qty;
+
+        $('#total' + myid).val(total);
+
+    }
+
+    function getall() {
+        var productArray = [];
+
+        //object of all products
+        var productObj = {
+            strProduct: 0,
+            strDescription: 0,
+            dblQtyShipped: 0,
+            dblPriceEach: 0,
+            dblLineTotal: 0
+        };
+
+        var trArray = $('#productTable tr');
+
+        for (var rowNum = 1; rowNum <= trArray.length - 1; rowNum++) {
+
+            try {
+                var product = $("#productid" + rowNum);
+                var description = $("#description" + rowNum);
+                var qty = $("#qty" + rowNum);
+                var rate = $("#rate" + rowNum);
+                var total = $("#total" + rowNum);
+                productObj = {};
+                productObj.strProduct = product.val();
+                productObj.strDescription = description.val();
+                productObj.dblQtyShipped = qty.val();
+                productObj.dblPriceEach = rate.val();
+                productObj.dblLineTotal = total.val();
+                productArray.push(productObj);
+            }
+            catch (Ex) {
+                var a = 1;
+            }
+        }
+
+
+        var getterms = $("#terms").children("option").filter(":selected").val()
+
+
+        var allData = {
+
+            strRegisteredBy : $('#regby').val(),
+            lngClientID : $('#customerid').val(),
+            strBillToAddress1: $("textarea#billingAddress").val(),
+            strContact: $('#customerEmail').val(),
+            lngTerms: getterms,
+            memInvMemo: $('textarea#message').val(),
+            Products: productArray
+        }
+
+
+
+        var myurl = "/api/Invoice/SaveInvoice";
+
+        $.ajax({
+
+            type: "POST",
+            url: myurl,
+            contentType: "application/json",
+            data: JSON.stringify(allData),
+            dataType: "json",
+            cache: false,
+
+            success: function (data) {
+
+            }, //end of success
+
+            async: "false",
+
+            error: function (error) {
+
+                $("#eror").show().html('Cannot Add User').delay(3000).fadeOut(1000);
+            }//end of erro
+
+        });
+
+
+
+
+
+
+        var check = null;
+
+    }
+
+
+    var dueAmount = 0;
+    function totalGet(el) {
+
+        var val = el.value
+        dueAmount = dueAmount + val;
+        $('#')
+
+
+    }
+
+
+
+   
+
+</script>
